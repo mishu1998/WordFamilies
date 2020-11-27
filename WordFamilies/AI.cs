@@ -8,65 +8,86 @@ namespace WordFamilies
     {
         public class WordFamilies
         {
-            public string root;
+            public string pattern;
             public List<Words> wordList = new List<Words>();
             public int score = 0;
         }
 
+        public static List<string> combinations = new List<string>();
+
         public static List<WordFamilies> wordFamilies = new List<WordFamilies>();
 
-        public static void Start()
+        public static void Start(char choice)
         {
-            BuildWordFamilies();
-            Console.ReadKey();
+            CombinationGenerator combinationGenerator = new CombinationGenerator();
+            combinations = combinationGenerator.Generate(Program.length);
+            BuildWordFamilies(choice);
+            string result =  EvaluateBestFamily();
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                if(result[i] != '*' && Program.displayWord[(2 * i + 1)] == '_')
+                Program.displayWord[(2 * i + 1)] = result[i];
+            }
 
         }
 
-        private static void BuildWordFamilies()
+        private static void BuildWordFamilies(char letter)
         {
-            foreach (var word in Program.wordList)
-            {
-                if (word.has_prefix == false && word.has_suffix == false)
-                {
-                    WordFamilies newFamily = new WordFamilies { root = word.word, wordList = new List<Words> { word }, score = 0 };
-                    wordFamilies.Add(newFamily);
-                }
-            }
+            wordFamilies.Clear();
 
-            foreach (var word in Program.wordList)
+            foreach (var pattern in combinations)
             {
-                StringBuilder temp = new StringBuilder(word.word);
-                if (word.has_prefix && word.has_suffix)
-                {
-                    temp = temp.Remove(0, word.prefix.Length);
-                    temp = temp.Remove(temp.Length - word.suffix.Length, word.suffix.Length);
-                }
-                else if (word.has_prefix)
-                    temp = temp.Remove(0, word.prefix.Length);
-                else if (word.has_suffix)
-                    temp = temp.Remove(temp.Length - word.suffix.Length, word.suffix.Length);
+                StringBuilder newPattern = new StringBuilder(pattern);
 
-                foreach (var family in wordFamilies)
+                for (int i = 0; i < pattern.Length; i++)
                 {
-                    if (temp.ToString() == family.root && family.wordList.Contains(word) != true)
+                    if (pattern[i] == '1')
+                        newPattern[i] = letter;
+                    else
                     {
-                        family.wordList.Add(word);
+                        newPattern[i] = '*';
                     }
                 }
+
+                WordFamilies newWordFamilies = new WordFamilies { pattern = newPattern.ToString() };
+                wordFamilies.Add(newWordFamilies);
             }
 
-            List<WordFamilies> newwordFamilies = new List<WordFamilies>();
 
-            for (int i = 0; i < wordFamilies.Count; i++)
+            for (int i = 0; i < Program.wordList.Count; i ++)
             {
-                if (wordFamilies[i].wordList.Count >= 2)
+                foreach (WordFamilies families in wordFamilies)
                 {
-                    newwordFamilies.Add(wordFamilies[i]);
+                    StringBuilder patternMatch = new StringBuilder(Program.wordList[i].word);
+
+                    for (int k = 0; k < Program.wordList[i].word.Length; k++)
+                    {
+                        if (families.pattern[k] == '*' && patternMatch[k] != letter)
+                            patternMatch[k] = '*';
+
+                    }
+
+                    if (families.pattern == patternMatch.ToString())
+                        families.wordList.Add(Program.wordList[i]);
+
                 }
             }
-
-            wordFamilies.RemoveRange(0,wordFamilies.Count);
-            wordFamilies = newwordFamilies;
         }
+
+        static string EvaluateBestFamily()
+        {
+            WordFamilies BestFamily = new WordFamilies();
+            for (int i = 0; i < wordFamilies.Count; i++)
+            {
+                if (wordFamilies[i].wordList.Count > BestFamily.wordList.Count)
+                    BestFamily = wordFamilies[i];
+            }
+            Program.wordList.Clear();
+            Program.wordList = BestFamily.wordList;
+
+            return BestFamily.pattern;
+        }
+
     }
 }

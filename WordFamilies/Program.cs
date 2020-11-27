@@ -9,14 +9,15 @@ namespace WordFamilies
     {
         public static string[] words = File.ReadAllLines("dictionary.txt");
 
+        public static StringBuilder displayWord = new StringBuilder();
+
         public static int length;
         public static int numberOfTries;
 
         public static List<Words> wordList = new List<Words>();
         public static List<char> lettersGuessed = new List<char>();
 
-        public static string[] prefix = { "un", "dis", "mis", "in", "il", "im", "irr", "re", "sub", "inter", "super", "anti", "auto", "bi", "aqua", "aero", "super", "micro", "audi", "trans", "prim", "auto", "tele", "re", "pre" };
-        public static string[] suffix = { "ing", "ed", "er", "est", "ied", "ier", "ing", "ment", "ness", "ful", "ly", "ation", "ous", "ology", "graph", "port" };
+        public static int gameFinished = 0;
 
 
         static void Main(string[] args)
@@ -62,6 +63,12 @@ namespace WordFamilies
                 }
 
             } while (validLenght == false);
+
+
+            for (int i = 0; i < length; i++)
+            {
+                displayWord.Append(" _");
+            }
         }
 
         private static void GetNumberOfTries()
@@ -89,12 +96,43 @@ namespace WordFamilies
 
         private static void Play()
         {
-            AI.Start();
-            while (numberOfTries != 0)
+
+            while (gameFinished == 0)
             {
                 Display();
-                char guess = ValidateInput();
+
+                string initial = displayWord.ToString();
+                int letterCount = lettersGuessed.Count;
+
+                AI.Start(ValidateInput());
+
+                if (initial == displayWord.ToString() && lettersGuessed.Count != letterCount)
+                    numberOfTries--;
+
+                else if (numberOfTries == 0)
+                    gameFinished = 1;
+
+                else if (displayWord.ToString().Contains('_') == false)
+                    gameFinished = 2;
             }
+
+            Console.Clear();
+            Display();
+
+            switch (gameFinished)
+            {
+                case 1:
+                    Console.WriteLine("You lost. No more tries left.");
+                    Random random = new Random();
+                    Console.WriteLine("The word was {0}. Good luck next time!", wordList[random.Next(wordList.Count)]);
+                    return;
+                case 2:
+                    Console.WriteLine("You have won! Congratulations!");
+                    return;
+            }
+
+            Console.ReadKey();
+
         }
 
         private static char ValidateInput()
@@ -107,9 +145,9 @@ namespace WordFamilies
                 Console.WriteLine("Please take your next guess: \n");
 
                 input = Console.ReadKey().KeyChar;
-                input = char.ToUpper(input);
+                input = char.ToLower(input);
 
-                if (input >= 65 && input <= 90 && lettersGuessed.Contains(input) == false)
+                if (input >= 97 && input <= 122 && lettersGuessed.Contains(input) == false)
                 {
                     validGuess = true;
                 }
@@ -121,7 +159,7 @@ namespace WordFamilies
                     Console.WriteLine("Letter invalid or already guessed.");
                 }
             }
-
+            lettersGuessed.Add(input);
             return input;
         }
 
@@ -130,20 +168,14 @@ namespace WordFamilies
             Console.Clear();
 
             Console.WriteLine("Number of tries left: \t {0} \t \t Current word pool: {1}", numberOfTries, wordList.Count);
-            Console.WriteLine("Letters guessed: \n \n \n");
+            Console.WriteLine("Letters guessed: ");
 
             for (int i = 0; i < lettersGuessed.Count; i++)
             {
                 Console.Write(lettersGuessed[i] + " , ");
             }
 
-            StringBuilder displayWord = new StringBuilder();
-            for (int i = 0; i < length; i++)
-            {
-                displayWord.Append(" _");
-            }
-
-            Console.WriteLine(displayWord + "\n \n");
+            Console.WriteLine("\n \n \n" + displayWord + "\n \n");
         }
 
 
