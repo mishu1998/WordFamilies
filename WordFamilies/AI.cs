@@ -30,7 +30,7 @@ namespace WordFamilies
                     lettersScore += consScore * 0.7 + vowelScore * 0.3;
                 }
                 double sizeScore = (double)wordList.Count / Program.wordList.Count;
-                lettersScore = lettersScore / wordList.Count;
+                lettersScore /= wordList.Count;
                 score = sizeScore*0.6 + lettersScore*0.4;
             }
         }
@@ -96,7 +96,7 @@ namespace WordFamilies
                 }
             }
         }
-        /*
+        
        static string EvaluateBestFamily()
        {
            WordFamilies BestFamily = new WordFamilies();
@@ -110,21 +110,6 @@ namespace WordFamilies
 
            return BestFamily.pattern;
        }
-        */
-
-        static string EvaluateBestFamily()
-        {
-            WordFamilies BestFamily = new WordFamilies();
-            for (int i = 0; i < wordFamilies.Count; i++)
-            {
-                wordFamilies[i].DetermineScore();
-                if (wordFamilies[i].score > BestFamily.score)
-                    BestFamily = wordFamilies[i];
-            }
-            Program.wordList.Clear();
-            Program.wordList = BestFamily.wordList;
-
-            return BestFamily.pattern;
-        }
+       
     }
 }
