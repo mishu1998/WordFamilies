@@ -10,7 +10,29 @@ namespace WordFamilies
         {
             public string pattern;
             public List<Words> wordList = new List<Words>();
-            public int score = 0;
+            public double score = 0;
+
+            public void DetermineScore()
+            {
+                double lettersScore = 0;
+
+                for (int i = 0; i < wordList.Count; i++)
+                {
+                    double uniqueLetters = 0;
+
+                    for (int j = 0; j < 26; j++)
+                    {
+                        if (wordList[i].letterFreq[j] != 0 && Program.lettersGuessed.Contains((char)i) == false)
+                            uniqueLetters++;
+                    }
+                    double consScore = (double)(uniqueLetters - wordList[i].vowels) / 26;
+                    double vowelScore = (double)wordList[i].vowels / 26;
+                    lettersScore += consScore * 0.7 + vowelScore * 0.3;
+                }
+                double sizeScore = (double)wordList.Count / Program.wordList.Count;
+                lettersScore = lettersScore / wordList.Count;
+                score = sizeScore*0.6 + lettersScore*0.4;
+            }
         }
 
         public static List<string> combinations = new List<string>();
@@ -74,13 +96,29 @@ namespace WordFamilies
                 }
             }
         }
+        /*
+       static string EvaluateBestFamily()
+       {
+           WordFamilies BestFamily = new WordFamilies();
+           for (int i = 0; i < wordFamilies.Count; i++)
+           {
+               if (wordFamilies[i].wordList.Count > BestFamily.wordList.Count)
+                   BestFamily = wordFamilies[i];
+           }
+           Program.wordList.Clear();
+           Program.wordList = BestFamily.wordList;
+
+           return BestFamily.pattern;
+       }
+        */
 
         static string EvaluateBestFamily()
         {
             WordFamilies BestFamily = new WordFamilies();
             for (int i = 0; i < wordFamilies.Count; i++)
             {
-                if (wordFamilies[i].wordList.Count > BestFamily.wordList.Count)
+                wordFamilies[i].DetermineScore();
+                if (wordFamilies[i].score > BestFamily.score)
                     BestFamily = wordFamilies[i];
             }
             Program.wordList.Clear();
@@ -88,6 +126,5 @@ namespace WordFamilies
 
             return BestFamily.pattern;
         }
-
     }
 }

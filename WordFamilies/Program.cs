@@ -104,16 +104,23 @@ namespace WordFamilies
                 string initial = displayWord.ToString();
                 int letterCount = lettersGuessed.Count;
 
+
+                if (numberOfTries <= 0)
+                {
+                    gameFinished = 1;
+                    break;
+                }
+                else if (displayWord.ToString().Contains('_') == false)
+                {
+                    gameFinished = 2;
+                    break;
+                }
+
                 AI.Start(ValidateInput());
 
-                if (initial == displayWord.ToString() && lettersGuessed.Count != letterCount)
+                if (initial == displayWord.ToString() && lettersGuessed.Count != letterCount) 
                     numberOfTries--;
 
-                else if (numberOfTries == 0)
-                    gameFinished = 1;
-
-                else if (displayWord.ToString().Contains('_') == false)
-                    gameFinished = 2;
             }
 
             Console.Clear();
@@ -124,7 +131,7 @@ namespace WordFamilies
                 case 1:
                     Console.WriteLine("You lost. No more tries left.");
                     Random random = new Random();
-                    Console.WriteLine("The word was {0}. Good luck next time!", wordList[random.Next(wordList.Count)]);
+                    Console.WriteLine("The word was {0}. Good luck next time!", wordList[random.Next(wordList.Count)].word);
                     return;
                 case 2:
                     Console.WriteLine("You have won! Congratulations!");
