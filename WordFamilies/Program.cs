@@ -16,6 +16,7 @@ namespace WordFamilies
 
         public static List<Words> wordList = new List<Words>();
         public static List<char> lettersGuessed = new List<char>();
+        public static List<string> combinations = new List<string>();
 
         public static int gameFinished = 0;
 
@@ -69,6 +70,8 @@ namespace WordFamilies
             {
                 displayWord.Append(" _");
             }
+
+            Generate();
         }
 
         private static void GetNumberOfTries()
@@ -183,6 +186,27 @@ namespace WordFamilies
             }
 
             Console.WriteLine("\n \n \n" + displayWord + "\n \n");
+        }
+
+        private static void Generate()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < (Math.Pow(2, length)); i++)
+            {
+                sb.Clear();
+                string s = Convert.ToString(Convert.ToInt32(i), 2);
+
+                if (s.Length != length)
+                {
+                    for (int j = 0; j < length - s.Length; j++)
+                    {
+                        sb.Append('0');
+                    }
+                }
+                sb.Append(s);
+                combinations.Add(sb.ToString());
+            }
         }
 
 
