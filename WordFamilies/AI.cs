@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace WordFamilies
 {
@@ -34,12 +33,12 @@ namespace WordFamilies
                 score = sizeScore * 0.6 + lettersScore * 0.4;
             }
         }
-        public static List<WordFamilies> wordFamilies = new List<WordFamilies>();
+
+        public static SortedList<string, WordFamilies> wordFamilies = new SortedList<string, WordFamilies>();
 
         public static void Start(char choice)
         {
-            if (Program.wordList.Count > 0)
-                BuildWordFamilies(choice);
+            BuildWordFamilies(choice);
 
             string result = EvaluateBestFamily();
 
@@ -55,63 +54,75 @@ namespace WordFamilies
         {
             wordFamilies.Clear();
 
-            foreach (var pattern in Program.combinations)
+            foreach (Words word in Program.wordList)
             {
-                StringBuilder newPattern = new StringBuilder(pattern);
+                string newPattern = "";
 
-                for (int i = 0; i < pattern.Length; i++)
+                for (int i = 0; i < word.length; i++)
                 {
-                    if (pattern[i] == '1')
-                        newPattern[i] = letter;
+                    if (word.word[i] == letter)
+                        newPattern += letter;
                     else
                     {
-                        newPattern[i] = '*';
+                        newPattern += '*';
                     }
                 }
 
-                WordFamilies newWordFamilies = new WordFamilies { pattern = newPattern.ToString() };
-                wordFamilies.Add(newWordFamilies);
-            }
-
-
-            for (int i = 0; i < Program.wordList.Count; i++)
-            {
-                foreach (WordFamilies families in wordFamilies)
+                if (wordFamilies.ContainsKey(newPattern))
                 {
-                    StringBuilder patternMatch = new StringBuilder(Program.wordList[i].word);
-
-                    for (int k = 0; k < Program.wordList[i].word.Length; k++)
-                    {
-                        if (families.pattern[k] == '*' && patternMatch[k] != letter)
-                            patternMatch[k] = '*';
-
-                    }
-
-                    if (families.pattern == patternMatch.ToString())
-                        families.wordList.Add(Program.wordList[i]);
-
+                    wordFamilies[newPattern].wordList.Add(word);
                 }
+                else
+                {
+                    wordFamilies.Add(newPattern, new WordFamilies { wordList = new List<Words> { word }, pattern = newPattern });
+                }
+
             }
         }
 
         static string EvaluateBestFamily()
         {
             WordFamilies BestFamily = new WordFamilies();
-            for (int i = 0; i < wordFamilies.Count; i++)
+            foreach (string key in wordFamilies.Keys)
             {
-                wordFamilies[i].DetermineScore();
-                if (wordFamilies[i].score > BestFamily.score)
-                    BestFamily = wordFamilies[i];
-                if(wordFamilies[i].wordList.Count != 0)
-                Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", wordFamilies[i].pattern, wordFamilies[i].score.ToString("0.##"), wordFamilies[i].wordList.Count);
+                wordFamilies[key].DetermineScore();
+                if (wordFamilies[key].score > BestFamily.score)
+                    BestFamily = wordFamilies[key];
+                if (wordFamilies[key].wordList.Count != 0)
+                    Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", wordFamilies[key].pattern, wordFamilies[key].score.ToString("0.##"), wordFamilies[key].wordList.Count);
             }
             Program.wordList.Clear();
             Program.wordList = BestFamily.wordList;
             Console.WriteLine("\n \n Winner!");
-            Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", BestFamily.pattern, BestFamily.score.ToString("0.##"),BestFamily.wordList.Count);
+            Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", BestFamily.pattern, BestFamily.score.ToString("0.##"), BestFamily.wordList.Count);
 
             Console.ReadLine();
             return BestFamily.pattern;
+        }
+
+
+        static string EvaluateBestFamilyExtra()
+        {
+            WordFamilies BestFamily = new WordFamilies();
+
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 26; j++)
+                {
+                    char letter = (char)(j + 97);
+
+                    if (Program.lettersGuessed.Contains(letter))
+                    {
+                        continue;
+                    }
+
+
+                }
+            }
+
+
+
+            return "";
         }
 
     }

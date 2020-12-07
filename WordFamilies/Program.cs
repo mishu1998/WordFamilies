@@ -33,11 +33,11 @@ namespace WordFamilies
 
         private static void GetWordLength()
         {
-            Console.WriteLine("Please select the word length that you wish to play (between 2 and 29): ");
 
             bool validLenght = false;
             do
             {
+                Console.WriteLine("Please select the word length that you wish to play (between 2 and 29): ");
                 string input = Console.ReadLine();
                 Int32.TryParse(input, out length);
 
@@ -59,8 +59,13 @@ namespace WordFamilies
                 {
                     Console.Clear();
                     Console.WriteLine("Invalid Selection.");
-                    Console.WriteLine("Please select the word length that you wish to play (between 2 and 29): ");
 
+                }
+
+                if (validLenght == false)
+                {
+                    Console.Clear();
+                    Console.WriteLine("There are no words with the lenght of {0}, please select another lenght.",length);
                 }
 
             } while (validLenght == false);
@@ -70,8 +75,6 @@ namespace WordFamilies
             {
                 displayWord.Append(" _");
             }
-
-            Generate();
         }
 
         private static void GetNumberOfTries()
@@ -187,28 +190,5 @@ namespace WordFamilies
 
             Console.WriteLine("\n \n \n" + displayWord + "\n \n");
         }
-
-        private static void Generate()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < (Math.Pow(2, length)); i++)
-            {
-                sb.Clear();
-                string s = Convert.ToString(Convert.ToInt32(i), 2);
-
-                if (s.Length != length)
-                {
-                    for (int j = 0; j < length - s.Length; j++)
-                    {
-                        sb.Append('0');
-                    }
-                }
-                sb.Append(s);
-                combinations.Add(sb.ToString());
-            }
-        }
-
-
     }
 }
