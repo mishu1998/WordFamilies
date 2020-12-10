@@ -4,14 +4,29 @@ using System.Text;
 
 namespace WordFamilies
 {
+    /// <summary>
+    /// This class is used to store statistics about a specific word that 
+    /// are used to calcualte the score for the algorithm
+    /// </summary>
     public class Words
     {
+        // The word stored as string
         public string word;
+
+        // Lenght of the word
         public int length;
+
+        // An array for each lettern in the alfabet
         public int[] letterFreq = new int[26];
+
+        // Number of vowels present in the word
         public int vowels;
 
 
+        /// <summary>
+        /// Determines said statistics
+        /// </summary>
+        /// <param name="s"> The word itself </param>
         public Words(string s)
         {
             word = s;
