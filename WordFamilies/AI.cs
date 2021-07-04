@@ -82,15 +82,15 @@ namespace WordFamilies
                 if (wordFamilies[key].score > BestFamily.score)
                     BestFamily = wordFamilies[key];
 
-                // Used for debugging
-                //if (wordFamilies[key].wordList.Count != 0)
-                    //Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", wordFamilies[key].pattern, wordFamilies[key].score.ToString("0.##"), wordFamilies[key].wordList.Count);
+                //Used for debugging
+                if (wordFamilies[key].wordList.Count != 0)
+                   Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", wordFamilies[key].pattern, wordFamilies[key].score.ToString("0.##"), wordFamilies[key].wordList.Count);
             }
 
             // Used for debugging
-            //Console.WriteLine("\n \n Winner!");
-            //Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", BestFamily.pattern, BestFamily.score.ToString("0.##"), BestFamily.wordList.Count);
-            //Console.ReadLine();
+            Console.WriteLine("\n \n Winner!");
+            Console.WriteLine("Pattern = {0} with a score of {1} and word count of {2}", BestFamily.pattern, BestFamily.score.ToString("0.##"), BestFamily.wordList.Count);
+            Console.ReadLine();
 
             return BestFamily;
         }

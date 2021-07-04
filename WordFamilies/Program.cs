@@ -16,6 +16,7 @@ namespace WordFamilies
         // Variables set by the user at runtime
         public static int length;
         public static int numberOfTries;
+        public static bool showCount; 
 
         // Variable used to store the remaining words, used as a main list
         public static List<Words> wordList = new List<Words>();
@@ -37,11 +38,15 @@ namespace WordFamilies
             // Method used to grab the number of tries from the user
             GetNumberOfTries();
 
+            GetDisplayChoice();
+
             // After gathering the user input the program proceedes into the algorithm
             Play();
 
             Console.Read();
         }
+
+
 
         private static void GetWordLength()
         {
@@ -123,6 +128,39 @@ namespace WordFamilies
             }
         }
 
+        /// <summary>
+        /// Gets user choice for displaying the word count
+        /// </summary>
+        private static void GetDisplayChoice()
+        {
+            bool validInput = false;
+
+            while (validInput == false)
+            {
+                Console.Clear();
+                Console.WriteLine("Do you wish to see the word count in the list? (Y/N)");
+                char choice = Console.ReadKey().KeyChar;
+
+                if (choice == 'y' || choice == 'Y') 
+                {
+                    showCount = true;
+                    validInput = true;
+                }
+
+                else if (choice == 'n' || choice == 'N')
+                {
+                    showCount = false;
+                    validInput = true;
+                }
+
+                else
+                {
+                    validInput = false;
+                    Console.WriteLine("Invalid input!");
+                }
+
+            }
+        }
         /// <summary>
         /// Method used to loop the actions up until game has finnished
         /// </summary>
@@ -229,8 +267,14 @@ namespace WordFamilies
         {
             Console.Clear();
 
-            Console.WriteLine("Number of tries left: \t {0} \t \t Current word pool: {1}", numberOfTries, wordList.Count);
-            Console.WriteLine("Letters guessed: ");
+            Console.WriteLine("Number of tries left: \t {0}", numberOfTries);
+
+            if (showCount)
+            {
+                Console.WriteLine("Current word pool: \t {0}", wordList.Count);
+            }
+
+            Console.WriteLine("\nLetters guessed: ");
 
             for (int i = 0; i < lettersGuessed.Count; i++)
             {
