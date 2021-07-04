@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace WordFamilies
@@ -32,6 +33,20 @@ namespace WordFamilies
         {
             Console.WriteLine("Welcome to Guess the Word \n\n");
 
+            try
+            {
+                if (words.Length == 0)
+                {
+                    Console.WriteLine("Dictionary could not be found! Please provide the \"dictionary.txt\" file in the {0} folder and try again", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                    Console.ReadKey();
+                }
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine("Dictionary could not be found! Please provide the \"dictionary.txt\" file in the {0} folder and try again", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                Console.ReadKey();
+                return;
+            }
             // Method used to grab the lenght variable from the user
             GetWordLength();
 
